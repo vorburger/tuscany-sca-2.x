@@ -77,6 +77,8 @@
                 <module>policies</module>
                 <module>policy-transaction</module>  
 <!-- wait until databinding-sdo is in
+     HUH? There is nothing about sdo in properties?  databinding-sdo works
+     This fails for totally SDO unrelated reasons
                 <module>properties</module>
 -->
                 <module>recursive-multi-level</module>
