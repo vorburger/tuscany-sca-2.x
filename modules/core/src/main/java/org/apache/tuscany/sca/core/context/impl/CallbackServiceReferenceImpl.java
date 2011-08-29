@@ -18,10 +18,15 @@
  */
 package org.apache.tuscany.sca.core.context.impl;
 
+import java.net.URI;
 import java.util.List;
 
+import org.apache.tuscany.sca.assembly.Binding;
 import org.apache.tuscany.sca.assembly.Endpoint;
 import org.apache.tuscany.sca.assembly.EndpointReference;
+import org.apache.tuscany.sca.assembly.SCABinding;
+import org.apache.tuscany.sca.assembly.builder.BindingBuilder;
+import org.apache.tuscany.sca.assembly.builder.BuilderContext;
 import org.apache.tuscany.sca.context.CompositeContext;
 import org.apache.tuscany.sca.context.ThreadMessageContext;
 import org.apache.tuscany.sca.core.invocation.Constants;
@@ -125,6 +130,49 @@ public class CallbackServiceReferenceImpl<B> extends ServiceReferenceImpl<B> {
             try {
                 RuntimeEndpointReference epr = (RuntimeEndpointReference)endpointReference.clone();
                 epr.setTargetEndpoint(resolvedEndpoint);
+                
+                // TUSCANY-3932
+                // If it's the default binding then we're going to look the callback endpoint
+                // up in the registry. Most remote protocols, which may be used as delegates 
+                // or binding.sca will deal in absolution callback address and send the 
+                // callback enbdpoint strutural URL separately. In this case flip the binding
+                // back to the structure URL. 
+                // TODO - all this creation of endpoints by the binding to represent callbacks
+                //        is confusing. Code here will change if we tidy it up. 
+                if (epr.getBinding().getType().equals(SCABinding.TYPE)){
+                    // assume that we're going to look up the callback endpoint in the
+                    // registry
+                    Message msgContext = ThreadMessageContext.getMessageContext();
+                    if (msgContext != null){
+                        String callbackEPURI = (String)msgContext.getHeaders().get("CALLBACK_EP_URI");
+                        if (callbackEPURI != null){
+                            resolvedEndpoint.setURI(callbackEPURI);
+                        }
+                    }
+                }
+/*                
+                // TUSCANY-3932
+                // If the resolved endpoint has a binding with a absolute URI then assume
+                // that URL has been passed in in the forward message and really treat it
+                // as a resolved endpoint.
+                Binding callbackBinding = resolvedEndpoint.getBinding();
+                if ( callbackBinding != null){
+                    URI callbackBindingURI = null;
+                    try {
+                        callbackBindingURI = new URI(callbackBinding.getURI());
+                    } catch (Exception ex){
+                        // ignore it, we test for null next
+                    }
+                    if (callbackBindingURI != null &&
+                        callbackBindingURI.isAbsolute()){
+                        epr.setBinding(callbackBinding);
+                        // TODO - What else?
+                        build(epr);
+                        epr.setStatus(EndpointReference.Status.WIRED_TARGET_FOUND_AND_MATCHED);
+                        epr.setUnresolved(false);
+                    }
+                }
+*/
                 return epr;
             } catch (CloneNotSupportedException e) {
                 // will not happen
@@ -134,5 +182,16 @@ public class CallbackServiceReferenceImpl<B> extends ServiceReferenceImpl<B> {
             return null;
         }
     }
+    
+    private void build(EndpointReference endpointReference) {
+        BindingBuilder builder = builders.getBindingBuilder(endpointReference.getBinding().getType());
+        if (builder != null) {
+            builder.build(endpointReference.getComponent(),
+                          endpointReference.getReference(),
+                          endpointReference.getBinding(),
+                          new BuilderContext(registry),
+                          false);
+        }
+    }    
 
 }

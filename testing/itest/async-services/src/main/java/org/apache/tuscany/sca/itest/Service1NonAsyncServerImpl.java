@@ -16,39 +16,14 @@
  * specific language governing permissions and limitations
  * under the License.    
  */
-package org.apache.tuscany.sca.itest.interfaces;
 
-import org.oasisopen.sca.annotation.Callback;
-import org.oasisopen.sca.annotation.Reference;
-import org.oasisopen.sca.annotation.Service;
+package org.apache.tuscany.sca.itest;
 
-@Service(ServiceComponent.class)
-public class ServiceComponentImpl implements ServiceComponent {
+public class Service1NonAsyncServerImpl implements Service1NonAsyncServer {
 
-    @Callback
-    protected CallbackInterface callback;
- 
-/*    
-    @Reference
-    protected ServiceComponent chainedCallbackReference;
-*/
-    private static ParameterObject po;
-
-    public void callback(String str) {
-        callback.callbackMethod(str);
-    }
-
-    public void modifyParameter() {
-        po = new ParameterObject("CallBack");
-        callback.modifyParameter(po);
-    }
-
-    public String foo(String str) {
-        return str;
-    }
-
-    public ParameterObject getPO() {
-        return po;
+    @Override
+    public String operation1(String input) {
+        return "Service1NonAsyncServerImpl.operation1 " + input;
     }
 
 }
