@@ -181,7 +181,10 @@ public final class SDOContextHelper {
     	if( defaultHelperContext != null ) return defaultHelperContext;
     	
         // Try to set up TCCL so that SDO Helper Provider service discovery works in OSGi
-    	if( registry == null ) return null;
+    	if( registry == null ) { 
+        	defaultHelperContext = HelperProvider.getDefaultContext();
+        	return defaultHelperContext;
+    	}
     	
         ClassLoader oldTccl =
             ClassLoaderContext.setContextClassLoader(SDOContextHelper.class.getClassLoader(),
