@@ -27,7 +27,7 @@
         <version>2.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
-    <artifactId>sample-helloworld-webservice-sdo</artifactId>
+    <artifactId>helloworld-webservice-sdo</artifactId>
     <name>Apache Tuscany SCA Sample HelloWorld Web Service SDO</name>
 
    <properties>
