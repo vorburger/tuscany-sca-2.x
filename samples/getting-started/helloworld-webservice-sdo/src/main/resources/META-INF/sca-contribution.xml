@@ -17,7 +17,11 @@
  * specific language governing permissions and limitations
  * under the License.
 -->
-<contribution xmlns="http://www.osoa.org/xmlns/sca/1.0"
-  xmlns:tuscany="http://tuscany.apache.org/xmlns/sca/1.0">
+<contribution xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+  xmlns:tuscany="http://tuscany.apache.org/xmlns/sca/1.1">
+ 
+ <!--  
+  <tuscany:import.sdo location="wsdl/helloworld.wsdl"/>
   <tuscany:sdo.types namespace="http://helloworld" location="wsdl/helloworld.wsdl"/>
+ -->  
 </contribution>

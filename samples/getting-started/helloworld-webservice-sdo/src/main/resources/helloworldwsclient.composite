@@ -17,16 +17,18 @@
     * specific language governing permissions and limitations
     * under the License.    
 -->
-<composite xmlns="http://www.osoa.org/xmlns/sca/1.0" targetNamespace="http://helloworld"
-    xmlns:dbsdo="http://tuscany.apache.org/xmlns/sca/databinding/sdo/1.0" xmlns:hw="http://helloworld"
-    name="helloworldws">
-    
+<composite xmlns="http://docs.oasis-open.org/ns/opencsa/sca/200912"
+           xmlns:tuscany="http://tuscany.apache.org/xmlns/sca/1.1"
+           targetNamespace="http://sample"
+           name="helloworld-contribution">
+            
     <component name="HelloWorldServiceComponent">
-        <implementation.java class="helloworld.HelloWorldImpl" />
-        <service name="HelloWorldService">
-            <interface.wsdl interface="http://helloworld#wsdl.interface(HelloWorld)" />
-            <binding.ws uri="http://localhost:8085/HelloWorldService" />
-        </service>
+        <implementation.java class="helloworld.HelloWorldServiceComponent" />
     </component>
+
+    <reference name="HelloWorldService" promote="HelloWorldServiceComponent/helloWorldService" multiplicity="1..1">
+        <interface.java interface="helloworld.HelloWorldService" />
+        <binding.ws wsdlElement="http://helloworld#wsdl.port(HelloWorldService/HelloWorldSoapPort)" />
+    </reference>
 
 </composite>

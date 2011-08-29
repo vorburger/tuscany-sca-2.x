@@ -21,12 +21,8 @@ package helloworld;
 import java.io.IOException;
 import java.net.Socket;
 
-
-import org.apache.tuscany.sca.node.Client;
-import org.apache.tuscany.sca.node.Contribution;
-import org.apache.tuscany.sca.node.ContributionLocationHelper;
-import org.apache.tuscany.sca.node.Node;
-import org.apache.tuscany.sca.node.NodeFactory;
+import org.apache.tuscany.sca.Node;
+import org.apache.tuscany.sca.TuscanyRuntime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,20 +30,18 @@ import org.junit.Test;
 /**
  * Starts up the SCA runtime which starts listening for service requests
  */
-public class HelloWorldTestServer {
+public class HelloWorldTestServerTest {
 
-    private Node node;
+	private Node node;
 
-        @Before
-	public void startServer() throws Exception {
-            try {
-			
-	    NodeFactory factory = NodeFactory.newInstance();
-        String contribution = ContributionLocationHelper.getContributionLocation(HelloWorldClientTestCase.class);
-        Node node = factory.createNode("helloworldws.composite", new Contribution("helloworld", contribution)).start();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+	@Before
+	public void startServer() throws Throwable {
+		try {
+			node = TuscanyRuntime.runComposite("helloworldws.composite", "target/classes");
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw e;
+		}
 	}
 
 	@Test
@@ -57,12 +51,12 @@ public class HelloWorldTestServer {
 
 	@After
 	public void stopServer() throws Exception {
-            node.stop();
+		if (node != null)
+			node.stop();
 	}
-	
-	public static void main(String[] args) throws Exception {
-		
-		HelloWorldTestServer test = new HelloWorldTestServer();
+
+	public static void main(String[] args) throws Throwable {
+		HelloWorldTestServerTest test = new HelloWorldTestServerTest();
 		test.startServer();
 	}
 
